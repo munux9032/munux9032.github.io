@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>VoxelCraft</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!-- ローディング -->
+<div id="ld">
+  <div class="ld-in">
+    <div class="ld-logo">&#9935; VoxelCraft</div>
+    <div class="ld-sub">スマホ最適化版 · Java Edition風</div>
+    <div class="ld-bar"><div id="ld-fill"></div></div>
+    <p id="ld-msg">起動中...</p>
+  </div>
+</div>
+
+<!-- ゲーム -->
+<div id="G" style="display:none">
+  <canvas id="cvs"></canvas>
+
+  <!-- HUD -->
+  <div id="hud">
+    <div id="xhair"></div>
+    <div id="bars"><div id="hpbar"></div><div id="fdbar"></div></div>
+    <div id="xpwrap"><div id="xpfill"></div></div>
+    <div id="hbwrap"><div id="hotbar"></div></div>
+    <div id="ohwrap">
+      <div id="ohslot" class="slot ohbg"></div>
+      <div class="slbl">副手[F]</div>
+    </div>
+    <div id="tip"></div>
+    <div id="bkwrap" style="display:none"><div id="bkfill"></div></div>
+  </div>
+
+  <!-- タッチゾーン -->
+  <div id="tzL"><div id="jring"><div id="jdot"></div></div></div>
+  <div id="tzR"></div>
+
+  <!-- アクションボタン -->
+  <div id="acts">
+    <div class="ar">
+      <button class="ab"      id="bsneak"  data-btn="bsneak"></button>
+      <button class="ab"      id="bsprint" data-btn="bsprint"></button>
+      <button class="ab"      id="binv"    data-btn="binv"></button>
+      <button class="ab"      id="bswap"   data-btn="bswap"></button>
+    </div>
+    <div class="ar">
+      <button class="ab ab-brk" id="bbrk" data-btn="bbrk"></button>
+      <button class="ab ab-jmp" id="bjmp" data-btn="bjmp"></button>
+      <button class="ab ab-plc" id="bplc" data-btn="bplc"></button>
+    </div>
+  </div>
+
+  <!-- インベントリ画面 (2x2クラフト) -->
+  <div id="invscr" class="hidden">
+    <div id="invpanel">
+      <div id="invhdr">
+        <span>インベントリ</span>
+        <button id="invcls">&#10005;</button>
+      </div>
+      <div id="invtop">
+        <div id="cgrid"></div>
+        <div class="carrow">&#10145;</div>
+        <div class="slot dark craft-out" id="cout"></div>
+        <div id="armor">
+          <div class="slot dark">&#9937;</div>
+          <div class="slot dark">&#129462;</div>
+          <div class="slot dark">&#128422;</div>
+          <div class="slot dark">&#128095;</div>
+        </div>
+        <div id="ohwrap2">
+          <div class="slbl2">副手</div>
+          <div class="slot dark" id="iohslot"></div>
+        </div>
+      </div>
+      <div id="invmain"></div>
+      <div id="invhb"></div>
+      <div id="dghost" class="ghost"></div>
+    </div>
+  </div>
+
+  <!-- 作業台画面 (3x3クラフト) -->
+  <div id="tablescr" class="hidden">
+    <div id="tablepanel">
+      <div id="tablehdr">
+        <span>&#128736; 作業台</span>
+        <button id="tablecls">&#10005;</button>
+      </div>
+      <div id="tabletop">
+        <div id="tgrid"></div>
+        <div class="carrow">&#10145;</div>
+        <div class="slot dark craft-out" id="tout"></div>
+      </div>
+      <div id="tmain"></div>
+      <div id="thb"></div>
+      <div id="tdghost" class="ghost"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="config.js"></script>
+<script src="blocks.js"></script>
+<script src="items.js"></script>
+<script src="draw.js"></script>
+<script src="buttons.js"></script>
+<script src="world.js"></script>
+<script src="renderer.js"></script>
+<script src="craft.js"></script>
+<script src="player.js"></script>
+<script src="inventory.js"></script>
+<script src="controls.js"></script>
+<script src="ui.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
