@@ -1,0 +1,2534 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>AI ゲームクリエイター</title>
+  <!-- M PLUS Rounded 1c: 日本語対応の丸ゴシックフォント -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800;900&display=swap" rel="stylesheet">
+  <style>
+/* ===================================================
+   AI ゲームクリエイター — 教育用UIスタイル
+   フォント: M PLUS Rounded 1c (丸ゴシック)
+   テーマ: 明るく・やさしく・楽しい
+=================================================== */
+
+/* ── フォントは index.html の <link> でロード済み ─── */
+
+/* ── CSS 変数 ──────────────────────────────────────── */
+:root {
+  /* ライトテーマ (ホーム・設定・モード選択) */
+  --bg-page:   #f0f5ff;
+  --bg-card:   #ffffff;
+  --bg-input:  #f5f8ff;
+  --bg-panel:  #eef2ff;
+
+  /* 教育カラーパレット */
+  --red:     #ff6b6b;
+  --red-dk:  #e05252;
+  --green:   #2ed573;
+  --green-dk:#20b258;
+  --blue:    #4da6ff;
+  --blue-dk: #3489e0;
+  --purple:  #a29bfe;
+  --purple-dk:#7c6df0;
+  --yellow:  #ffd166;
+  --orange:  #ff8c42;
+  --teal:    #00cec9;
+
+  /* テキスト */
+  --txt:   #2d3561;
+  --txt2:  #7280a0;
+  --txt3:  #a8b4cc;
+  --bdr:   #dce6ff;
+  --bdr2:  #b8c8ff;
+
+  /* ダークテーマ (パレット・ローディング・ゲーム) */
+  --dk-bg:    #141733;
+  --dk-card:  #1e2248;
+  --dk-panel: #191d40;
+  --dk-bdr:   rgba(255,255,255,0.07);
+  --dk-bdr2:  rgba(255,255,255,0.15);
+  --dk-txt:   #e8ecff;
+  --dk-txt2:  #8891b8;
+  --dk-txt3:  #4a5080;
+
+  /* シャドウ */
+  --shadow-sm: 0 2px 12px rgba(90, 110, 220, 0.10);
+  --shadow:    0 4px 20px rgba(90, 110, 220, 0.14);
+  --shadow-lg: 0 8px 40px rgba(90, 110, 220, 0.22);
+
+  /* 角丸 */
+  --r-xs: 8px;
+  --r-sm: 12px;
+  --r:    18px;
+  --r-lg: 24px;
+  --r-xl: 32px;
+}
+
+/* ── リセット ──────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  font-family: 'M PLUS Rounded 1c', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg-page);
+  color: var(--txt);
+  user-select: none;
+}
+
+/* ── 画面共通 ──────────────────────────────────────── */
+.scr {
+  position: absolute;
+  inset: 0;
+  display: none;
+  overflow: hidden;
+}
+.scr.on { display: flex; }
+
+/* ===================================================
+   🏠 ホーム画面
+=================================================== */
+#s-home {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, #f0f5ff 0%, #e8eeff 55%, #f5eeff 100%);
+}
+
+/* 背景の浮かぶバブル */
+.stars { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.star  { position: absolute; border-radius: 50%; }
+
+.home-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.home-logo {
+  font-size: 5.5rem;
+  line-height: 1;
+  margin-bottom: 4px;
+  filter: drop-shadow(0 6px 18px rgba(100,100,220,.22));
+  animation: bob 2.8s ease-in-out infinite;
+}
+@keyframes bob {
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50%       { transform: translateY(-12px) rotate(3deg); }
+}
+
+.home-title {
+  font-size: 2.6rem;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+  text-align: center;
+  background: linear-gradient(120deg, var(--red) 0%, var(--purple) 50%, var(--blue) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.home-sub {
+  color: var(--txt2);
+  font-size: .96rem;
+  font-weight: 700;
+  margin-bottom: 36px;
+}
+
+.home-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  width: 270px;
+}
+
+/* ホームボタン共通 */
+.hbtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 17px 24px;
+  border-radius: var(--r-xl);
+  border: none;
+  font-family: inherit;
+  font-size: 1.05rem;
+  font-weight: 800;
+  cursor: pointer;
+  letter-spacing: .3px;
+  transition: transform .22s cubic-bezier(.34,1.56,.64,1), box-shadow .2s;
+  box-shadow: var(--shadow);
+}
+.hbtn:hover  { transform: translateY(-5px); }
+.hbtn:active { transform: translateY(-2px); }
+
+.hbtn-new  {
+  background: linear-gradient(135deg, var(--red), var(--red-dk));
+  color: #fff;
+}
+.hbtn-new:hover  { box-shadow: 0 10px 30px rgba(255,107,107,.40); }
+
+.hbtn-cont {
+  background: linear-gradient(135deg, var(--green), var(--green-dk));
+  color: #fff;
+}
+.hbtn-cont:hover { box-shadow: 0 10px 30px rgba(46,213,115,.38); }
+
+.hbtn-set  {
+  background: linear-gradient(135deg, var(--blue), var(--blue-dk));
+  color: #fff;
+}
+.hbtn-set:hover  { box-shadow: 0 10px 30px rgba(77,166,255,.38); }
+
+/* API インジケーター */
+.api-dot {
+  position: absolute;
+  top: 18px; right: 22px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: .78rem;
+  font-weight: 700;
+  color: var(--txt3);
+  background: var(--bg-card);
+  padding: 5px 12px;
+  border-radius: 50px;
+  box-shadow: var(--shadow-sm);
+  border: 1.5px solid var(--bdr);
+  z-index: 2;
+}
+.api-dot .dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--txt3);
+}
+.api-dot.ok { color: var(--green-dk); border-color: var(--green); background: #f0fff8; }
+.api-dot.ok .dot { background: var(--green); box-shadow: 0 0 8px var(--green); }
+
+/* ===================================================
+   ⚙ 設定画面
+=================================================== */
+#s-settings {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-page);
+}
+
+.set-box {
+  background: var(--bg-card);
+  border: 2px solid var(--bdr);
+  border-radius: var(--r-xl);
+  padding: 36px 38px;
+  width: 460px;
+  max-width: 95vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+}
+
+.set-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.set-head h2 {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--txt);
+}
+
+.fl        { margin-bottom: 18px; }
+.fl-lbl {
+  font-size: .72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--txt2);
+  margin-bottom: 8px;
+}
+
+.prov-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.pb {
+  padding: 10px 6px;
+  background: var(--bg-input);
+  border: 2px solid var(--bdr);
+  border-radius: var(--r);
+  color: var(--txt2);
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 800;
+  font-size: .84rem;
+  transition: all .18s;
+  text-align: center;
+}
+.pb:hover { border-color: var(--bdr2); color: var(--txt); background: var(--bg-panel); }
+.pb.p-claude { border-color: #ff8c42; color: #e07028; background: #fff8f0; }
+.pb.p-gemini { border-color: #4da6ff; color: #2e80d0; background: #f0f8ff; }
+.pb.p-openai { border-color: #2ed573; color: #20a055; background: #f0fff8; }
+
+.inp {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--bg-input);
+  border: 2px solid var(--bdr);
+  border-radius: var(--r);
+  color: var(--txt);
+  font-family: inherit;
+  font-size: .94rem;
+  font-weight: 700;
+  outline: none;
+  transition: border-color .18s, box-shadow .18s;
+}
+.inp:focus {
+  border-color: var(--purple);
+  box-shadow: 0 0 0 4px rgba(162,155,254,.18);
+}
+
+select.inp {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237280a0' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+}
+
+.con-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--purple), var(--purple-dk));
+  color: #fff;
+  border: none;
+  border-radius: var(--r-xl);
+  font-family: inherit;
+  font-size: .98rem;
+  font-weight: 800;
+  cursor: pointer;
+  margin-top: 6px;
+  transition: opacity .2s, transform .2s;
+  box-shadow: 0 4px 16px rgba(162,155,254,.36);
+}
+.con-btn:hover    { opacity: .88; transform: translateY(-2px); }
+.con-btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+
+.st-msg {
+  padding: 12px 16px;
+  border-radius: var(--r);
+  font-size: .86rem;
+  font-weight: 700;
+  margin-top: 12px;
+  display: none;
+}
+.st-ok      { background: #f0fff8; color: var(--green-dk); border: 2px solid var(--green); }
+.st-err     { background: #fff0f0; color: var(--red-dk);   border: 2px solid var(--red);   }
+.st-loading { background: var(--bg-panel); color: var(--txt2); border: 2px solid var(--bdr); }
+
+.back-btn {
+  width: 100%;
+  padding: 12px;
+  background: none;
+  border: 2px solid var(--bdr);
+  border-radius: var(--r-xl);
+  color: var(--txt2);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: .9rem;
+  font-weight: 700;
+  margin-top: 10px;
+  transition: all .18s;
+}
+.back-btn:hover { border-color: var(--bdr2); color: var(--txt); background: var(--bg-panel); }
+
+/* ===================================================
+   🎮 モード選択画面
+=================================================== */
+#s-mode {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-page);
+}
+
+.mode-title {
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--txt);
+  margin-bottom: 6px;
+}
+.mode-sub {
+  color: var(--txt2);
+  font-size: .95rem;
+  font-weight: 700;
+  margin-bottom: 44px;
+}
+
+.mode-cards {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.mc {
+  width: 188px;
+  padding: 32px 20px 28px;
+  background: var(--bg-card);
+  border: 2.5px solid var(--bdr);
+  border-radius: var(--r-xl);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  box-shadow: var(--shadow);
+  transition: all .28s cubic-bezier(.34,1.56,.64,1);
+}
+.mc:hover { transform: translateY(-10px) scale(1.04); box-shadow: var(--shadow-lg); }
+
+.mc-block { border-color: var(--red);    }
+.mc-block:hover { background: #fff5f5; box-shadow: 0 16px 40px rgba(255,107,107,.22); }
+
+.mc-3d    { border-color: var(--purple); }
+.mc-3d:hover    { background: #f8f5ff; box-shadow: 0 16px 40px rgba(162,155,254,.25); }
+
+.mc-2d    { border-color: var(--teal);   }
+.mc-2d:hover    { background: #f0ffff; box-shadow: 0 16px 40px rgba(0,206,201,.20); }
+
+.mc-ico  { font-size: 3.2rem; line-height: 1; }
+.mc-name {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: var(--txt);
+}
+.mc-desc {
+  font-size: .77rem;
+  font-weight: 700;
+  color: var(--txt2);
+  text-align: center;
+  line-height: 1.6;
+}
+
+/* ===================================================
+   🎨 パレット (描画) 画面  ← ダークテーマ
+=================================================== */
+#s-palette { flex-direction: column; background: var(--dk-bg); }
+
+/* ツールバー */
+.toolbar {
+  height: 52px;
+  min-height: 52px;
+  background: var(--dk-card);
+  border-bottom: 1.5px solid var(--dk-bdr);
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  gap: 6px;
+  z-index: 10;
+  flex-shrink: 0;
+}
+
+.tb {
+  padding: 7px 14px;
+  background: rgba(255,255,255,.06);
+  border: 1.5px solid var(--dk-bdr);
+  border-radius: var(--r);
+  color: var(--dk-txt2);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: .8rem;
+  font-weight: 700;
+  transition: all .15s;
+  white-space: nowrap;
+}
+.tb:hover { background: rgba(255,255,255,.12); color: var(--dk-txt); }
+
+.tb-exit {
+  border-color: rgba(255,107,107,.4);
+  color: var(--red);
+}
+.tb-exit:hover { background: rgba(255,107,107,.14); border-color: var(--red); }
+
+.tb-clear { border-color: rgba(255,107,107,.25); color: #ff8a8a; }
+
+.tb-done {
+  background: linear-gradient(135deg, var(--green), var(--green-dk));
+  border-color: transparent;
+  color: #fff;
+  padding: 8px 20px;
+  font-size: .88rem;
+  font-weight: 800;
+  box-shadow: 0 3px 12px rgba(46,213,115,.35);
+}
+.tb-done:hover { opacity: .88; color: #fff; }
+
+.tb-divider { width: 1px; height: 22px; background: var(--dk-bdr); margin: 0 2px; flex-shrink: 0; }
+.tb-sp      { flex: 1; }
+
+.mode-pill {
+  font-size: .74rem;
+  font-weight: 700;
+  color: var(--dk-txt3);
+  background: rgba(255,255,255,.05);
+  padding: 4px 11px;
+  border-radius: 50px;
+  border: 1.5px solid var(--dk-bdr);
+  white-space: nowrap;
+}
+
+/* パレットボディ */
+.pal-body {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.cw {
+  flex: 1;
+  overflow: hidden;
+  background: var(--dk-bg);
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+#draw-canvas {
+  display: block;
+  cursor: crosshair;
+  touch-action: none;
+  border-radius: 0;
+}
+#draw-canvas.eraser-mode { cursor: cell; }
+
+/* サイドパネル */
+.side {
+  width: 196px;
+  min-width: 196px;
+  background: var(--dk-panel);
+  border-left: 1.5px solid var(--dk-bdr);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.ss {
+  padding: 12px;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+  flex-shrink: 0;
+}
+.ss-grow { flex: 1; padding-bottom: 14px; }
+
+.ss-lbl {
+  font-size: .66rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.8px;
+  color: var(--dk-txt3);
+  margin-bottom: 8px;
+}
+
+/* 現在の色 */
+.cur-col-row { display: flex; align-items: center; gap: 10px; }
+.swatch {
+  width: 40px; height: 40px;
+  border-radius: var(--r-sm);
+  border: 2.5px solid rgba(255,255,255,.15);
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,.3);
+}
+.col-hex  { font-size: .78rem; font-weight: 700; color: var(--dk-txt2); font-family: 'Courier New', monospace; }
+.col-note { font-size: .64rem; font-weight: 700; color: var(--dk-txt3); margin-top: 2px; }
+
+/* ブラシサイズ */
+.brush-row { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; }
+
+.bsz {
+  width: 36px; height: 36px;
+  background: rgba(255,255,255,.05);
+  border: 1.5px solid var(--dk-bdr);
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .15s;
+}
+.bsz.on    { border-color: var(--green); background: rgba(46,213,115,.12); box-shadow: 0 0 0 2px rgba(46,213,115,.2); }
+.bsz:hover { border-color: var(--dk-bdr2); }
+.bsz-dot   { background: #fff; border-radius: 50%; }
+
+/* 消しゴム */
+.eraser-btn {
+  width: 100%;
+  padding: 9px 10px;
+  background: rgba(255,255,255,.05);
+  border: 1.5px solid var(--dk-bdr);
+  border-radius: var(--r);
+  color: var(--dk-txt2);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: .8rem;
+  font-weight: 700;
+  transition: all .15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.eraser-btn.on    { border-color: var(--red); color: var(--red); background: rgba(255,107,107,.10); }
+.eraser-btn:hover { border-color: var(--dk-bdr2); }
+
+/* カラーグリッド */
+.cgrid {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 2.5px;
+}
+.cc {
+  aspect-ratio: 1;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: transform .1s;
+  position: relative;
+}
+.cc:hover { transform: scale(1.5); z-index: 5; border-color: rgba(255,255,255,.7); }
+.cc.on    { border-color: #fff; transform: scale(1.35); z-index: 5; box-shadow: 0 0 0 1.5px rgba(0,0,0,.5); }
+
+/* フッター (保存ボタン) */
+.pal-footer {
+  height: 50px;
+  min-height: 50px;
+  background: var(--dk-card);
+  border-top: 1.5px solid var(--dk-bdr);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.save-btn {
+  padding: 9px 34px;
+  background: linear-gradient(135deg, var(--blue), var(--blue-dk));
+  color: #fff;
+  border: none;
+  border-radius: var(--r-xl);
+  font-family: inherit;
+  font-size: .9rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(77,166,255,.35);
+  transition: all .2s;
+}
+.save-btn:hover { transform: translateY(-2px); box-shadow: 0 7px 24px rgba(77,166,255,.50); }
+
+/* ===================================================
+   ⏳ ローディング画面
+=================================================== */
+#s-loading {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  background: linear-gradient(160deg, var(--dk-bg) 0%, #1e1a40 100%);
+}
+
+.rings {
+  position: relative;
+  width: 96px; height: 96px;
+  flex-shrink: 0;
+}
+.ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 3px solid transparent;
+}
+.r1 { border-top-color:    var(--red);    animation: spin 1.1s  linear infinite; }
+.r2 { inset: 14px; border-right-color:  var(--green);  animation: spin  .85s linear infinite reverse; }
+.r3 { inset: 28px; border-bottom-color: var(--blue);   animation: spin  .65s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.ring-icon {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+}
+
+.ld-title  { font-size: 1.4rem; font-weight: 900; color: var(--dk-txt); }
+.ld-status { color: var(--dk-txt2); font-size: .9rem; font-weight: 700; text-align: center; max-width: 300px; }
+
+.ld-bar-wrap {
+  width: 280px; height: 8px;
+  background: rgba(255,255,255,.07);
+  border-radius: 50px;
+  overflow: hidden;
+}
+.ld-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--red), var(--purple), var(--blue));
+  border-radius: 50px;
+  width: 0%;
+  transition: width .5s ease;
+}
+
+/* ===================================================
+   🎮 ゲーム画面
+=================================================== */
+#s-game { background: #000; position: relative; }
+#game-frame { width: 100%; height: 100%; border: none; }
+
+.g-exit {
+  position: absolute;
+  top: 14px; left: 14px;
+  z-index: 100;
+  padding: 8px 18px;
+  background: rgba(20,23,51,.85);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255,107,107,.55);
+  color: var(--red);
+  border-radius: var(--r-xl);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: .82rem;
+  font-weight: 800;
+  transition: all .2s;
+}
+.g-exit:hover { background: rgba(255,107,107,.22); border-color: var(--red); }
+
+/* ===================================================
+   🗨 トースト通知
+=================================================== */
+#toasts {
+  position: fixed;
+  bottom: 20px; right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.toast {
+  padding: 12px 18px;
+  background: var(--bg-card);
+  border-radius: var(--r-lg);
+  font-family: inherit;
+  font-size: .86rem;
+  font-weight: 700;
+  border: 2px solid var(--bdr);
+  max-width: 290px;
+  box-shadow: var(--shadow-lg);
+  animation: toastIn .32s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(110%) scale(.8); }
+  to   { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+.t-ok   { border-color: var(--green);  color: var(--green-dk); background: #f0fff8; }
+.t-err  { border-color: var(--red);    color: var(--red-dk);   background: #fff0f0; }
+.t-info { border-color: var(--blue);   color: var(--blue-dk);  background: #f0f8ff; }
+
+/* ===================================================
+   スクロールバー
+=================================================== */
+::-webkit-scrollbar       { width: 4px; }
+::-webkit-scrollbar-thumb { background: rgba(100,120,220,.2); border-radius: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+/* ===================================================
+   バブルアニメーション (ホーム背景)
+=================================================== */
+@keyframes twk {
+  0%   { transform: translateY(0) scale(1);    opacity: 0.07; }
+  100% { transform: translateY(-22px) scale(1.08); opacity: 0.22; }
+}
+
+/* ===================================================
+   モード画面 back-btn 幅上書き
+=================================================== */
+#s-mode .back-btn { width: 200px; margin-top: 28px; text-align: center; }
+
+  </style>
+</head>
+<body>
+
+<!-- ████ HOME ████ -->
+<div class="scr on" id="s-home">
+  <div class="stars" id="star-field"></div>
+  <div class="api-dot" id="api-dot">
+    <div class="dot"></div>
+    <span id="api-dot-lbl">API未接続</span>
+  </div>
+  <div class="home-inner">
+    <div class="home-logo">🎨</div>
+    <h1 class="home-title">AI ゲームクリエイター</h1>
+    <p class="home-sub">✏️ 絵を描いて、ゲームを作ろう！</p>
+    <div class="home-btns">
+      <button type="button" class="hbtn hbtn-new"  id="btn-new" >✨ 新規作成</button>
+      <button type="button" class="hbtn hbtn-cont" id="btn-cont">▶ 続きから</button>
+      <button type="button" class="hbtn hbtn-set"  id="btn-set" >⚙ 設定</button>
+    </div>
+  </div>
+</div>
+
+<!-- ████ SETTINGS ████ -->
+<div class="scr" id="s-settings">
+  <div class="set-box">
+    <div class="set-head">
+      <span style="font-size:1.6rem">⚙</span>
+      <h2>API 設定</h2>
+    </div>
+
+    <div class="fl">
+      <div class="fl-lbl">AI プロバイダー</div>
+      <div class="prov-row">
+        <button type="button" class="pb" id="pb-claude">🟠 Claude</button>
+        <button type="button" class="pb" id="pb-gemini">🔵 Gemini</button>
+        <button type="button" class="pb" id="pb-openai">🟢 ChatGPT</button>
+      </div>
+    </div>
+
+    <div class="fl">
+      <div class="fl-lbl">API キー</div>
+      <input class="inp" type="password" id="key-inp"
+             placeholder="API キーを入力..." autocomplete="off">
+    </div>
+
+    <div class="fl">
+      <div class="fl-lbl">モデル</div>
+      <select class="inp" id="model-sel">
+        <option value="">先にプロバイダーを選択してください</option>
+      </select>
+    </div>
+
+    <button type="button" class="con-btn" id="btn-connect">🔗 接続テスト</button>
+    <div class="st-msg" id="st-msg"></div>
+    <button type="button" class="back-btn" id="btn-back-settings">← ホームに戻る</button>
+  </div>
+</div>
+
+<!-- ████ MODE SELECT ████ -->
+<div class="scr" id="s-mode">
+  <h2 class="mode-title">ゲームモードを選択</h2>
+  <p class="mode-sub">どんな世界のゲームを作りますか？</p>
+  <div class="mode-cards">
+    <div class="mc mc-block" id="mc-block">
+      <div class="mc-ico">🧱</div>
+      <div class="mc-name">ブロック</div>
+      <div class="mc-desc">すべてがブロックで<br>構成された世界</div>
+    </div>
+    <div class="mc mc-3d" id="mc-3d">
+      <div class="mc-ico">🌐</div>
+      <div class="mc-name">3D</div>
+      <div class="mc-desc">3Dキャラクターと<br>オブジェクトの世界</div>
+    </div>
+    <div class="mc mc-2d" id="mc-2d">
+      <div class="mc-ico">🎮</div>
+      <div class="mc-name">2.5D</div>
+      <div class="mc-desc">奥行きのある<br>2.5次元の世界</div>
+    </div>
+  </div>
+  <button type="button" class="back-btn" id="btn-back-mode" style="margin-top:30px;width:200px">
+    ← ホームに戻る
+  </button>
+</div>
+
+<!-- ████ PALETTE ████ -->
+<div class="scr" id="s-palette">
+
+  <div class="toolbar">
+    <button type="button" class="tb tb-exit"  id="btn-exit-palette">✕ 終了</button>
+    <div class="tb-divider"></div>
+    <button type="button" class="tb"          id="btn-undo" >↩ 戻る</button>
+    <button type="button" class="tb"          id="btn-redo" >↪ やり直し</button>
+    <button type="button" class="tb tb-clear" id="btn-clear">✕ 全消し</button>
+    <div class="tb-sp"></div>
+    <span class="mode-pill" id="mode-pill">🧱 ブロック</span>
+    <div class="tb-sp"></div>
+    <button type="button" class="tb tb-done"  id="btn-complete">✓ 完了</button>
+  </div>
+
+  <div class="pal-body">
+    <div class="cw" id="cw">
+      <canvas id="draw-canvas"></canvas>
+    </div>
+
+    <div class="side">
+      <div class="ss">
+        <div class="ss-lbl">現在の色</div>
+        <div class="cur-col-row">
+          <div class="swatch" id="swatch"></div>
+          <div>
+            <div class="col-hex" id="col-hex">#FFFFFF</div>
+            <div class="col-note">選択中</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ss">
+        <div class="ss-lbl">ブラシサイズ</div>
+        <div class="brush-row">
+          <button type="button" class="bsz"    data-r="4" ><div class="bsz-dot" style="width:5px;height:5px"></div></button>
+          <button type="button" class="bsz on" data-r="8" ><div class="bsz-dot" style="width:10px;height:10px"></div></button>
+          <button type="button" class="bsz"    data-r="16"><div class="bsz-dot" style="width:18px;height:18px"></div></button>
+          <button type="button" class="bsz"    data-r="24"><div class="bsz-dot" style="width:26px;height:26px"></div></button>
+        </div>
+      </div>
+
+      <div class="ss">
+        <button type="button" class="eraser-btn" id="eraser-btn"><span>◻</span> 消しゴム</button>
+      </div>
+
+      <div class="ss ss-grow">
+        <div class="ss-lbl">カラーパレット (100色)</div>
+        <div class="cgrid" id="cgrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pal-footer">
+    <button type="button" class="save-btn" id="btn-save">💾 保存</button>
+  </div>
+
+</div>
+
+<!-- ████ LOADING ████ -->
+<div class="scr" id="s-loading">
+  <div class="rings">
+    <div class="ring r1"></div>
+    <div class="ring r2"></div>
+    <div class="ring r3"></div>
+    <div class="ring-icon">🤖</div>
+  </div>
+  <div class="ld-title">ゲームを生成中</div>
+  <div class="ld-status" id="ld-status">AIが画像を解析しています...</div>
+  <div class="ld-bar-wrap">
+    <div class="ld-bar" id="ld-bar"></div>
+  </div>
+</div>
+
+<!-- ████ GAME ████ -->
+<div class="scr" id="s-game">
+  <button type="button" class="g-exit" id="btn-exit-game">← パレットに戻る</button>
+  <iframe id="game-frame"
+    title="生成されたゲーム"
+    sandbox="allow-scripts allow-pointer-lock allow-popups allow-modals allow-forms"
+    allow="autoplay; fullscreen"></iframe>
+</div>
+
+<div id="toasts"></div>
+
+<script>/* state.js */
+/**
+ * state.js — グローバル状態とモデル定義
+ *
+ * 他の全JSファイルから参照される共有状態。
+ * このファイルを最初にロードすること。
+ */
+
+// ── App State ──────────────────────────────────────
+const S = {
+  provider:  null,    // 'claude' | 'gemini' | 'openai'
+  apiKey:    '',
+  model:     '',
+  gameMode:  'block', // 'block' | '3d' | '2.5d'
+  connected: false,
+
+  // Drawing state
+  brushR:   8,          // brush radius (logical px)
+  color:    '#e03050',  // current draw color (hex)
+  eraser:   false,
+  drawing:  false,
+  lx: 0, ly: 0         // last pointer position
+};
+
+// ── Model Lists per Provider ───────────────────────
+const MODELS = {
+  claude: [
+    { v: 'claude-opus-4-6',           l: 'Claude Opus 4.6' },
+    { v: 'claude-sonnet-4-6',         l: 'Claude Sonnet 4.6' },
+    { v: 'claude-haiku-4-5-20251001', l: 'Claude Haiku 4.5' }
+  ],
+  gemini: [
+    // ※ gemini-2.6-pro は公式ドキュメント未確認のため gemini-2.5-pro を使用
+    { v: 'gemini-2.5-pro',         l: 'Gemini 2.5 Pro' },
+    { v: 'gemini-3.5-flash',       l: 'Gemini 3.5 Flash' },
+    { v: 'gemini-3.5-flash-lite',  l: 'Gemini 3.5 Flash Lite' },
+    { v: 'gemini-3.1-flash-lite',  l: 'Gemini 3.1 Flash' },
+    { v: 'gemini-3.1-pro-preview', l: 'Gemini 3.1 Pro' }
+  ],
+  openai: [
+    { v: 'gpt-4o',      l: 'GPT-4o' },
+    { v: 'gpt-4o-mini', l: 'GPT-4o mini' }
+  ]
+};
+
+</script>
+<script>/* palette.js */
+/**
+ * palette.js — 100色パレット管理
+ *
+ * 10列 (色相) × 10行 (明るさ) のグリッドを生成・管理する。
+ * 依存: state.js のみ
+ * ※ draw.js は逆に Palette.selIdx を参照するため draw.js の方が後でロードされる
+ */
+
+const Palette = {
+  colors: [],
+  selIdx: -1, // 現在選択中の色セルindex
+
+  /**
+   * 100色グリッドを生成してDOMに挿入し、デフォルト色を選択する
+   */
+  build() {
+    // 横軸: 10種の色相 (null = グレースケール)
+    const hues   = [0, 25, 55, 82, 132, 182, 210, 258, 318, null];
+    // 縦軸: 10段階の明るさ (上=明るい, 下=暗い)
+    const lights = [92, 82, 72, 62, 52, 42, 32, 22, 13, 5];
+
+    this.colors = [];
+    for (let row = 0; row < 10; row++) {
+      for (let col = 0; col < 10; col++) {
+        this.colors.push(
+          hues[col] === null
+            ? `hsl(0,0%,${lights[row]}%)`
+            : `hsl(${hues[col]},78%,${lights[row]}%)`
+        );
+      }
+    }
+
+    const grid = document.getElementById('cgrid');
+    grid.innerHTML = '';
+
+    this.colors.forEach((col, i) => {
+      const cell = document.createElement('div');
+      cell.className = 'cc';
+      cell.style.background = col;
+      cell.title = this.toHex(col);
+      cell.onclick = () => this.pick(this.toHex(col), i);
+      grid.appendChild(cell);
+    });
+
+    // デフォルト: index 40 = row4(明るさ52%) col0(色相0°=赤)
+    this.pick(this.toHex(this.colors[40]), 40);
+  },
+
+  /**
+   * 色を選択し、UIを更新する
+   * @param {string} hex  選択した色の16進数値
+   * @param {number} idx  カラーグリッドのセルindex
+   */
+  pick(hex, idx) {
+    S.color  = hex;
+    S.eraser = false;
+
+    // 消しゴムボタンとキャンバスカーソルをリセット
+    document.getElementById('eraser-btn').classList.remove('on');
+    const cv = document.getElementById('draw-canvas');
+    if (cv) cv.classList.remove('eraser-mode');
+
+    // UIスウォッチ更新
+    document.getElementById('swatch').style.background = hex;
+    document.getElementById('col-hex').textContent     = hex.toUpperCase();
+
+    // 以前の選択セルのハイライトを外し、新しいセルをハイライト
+    const cells = document.querySelectorAll('.cc');
+    if (this.selIdx >= 0 && cells[this.selIdx]) {
+      cells[this.selIdx].classList.remove('on');
+    }
+    this.selIdx = idx;
+    if (cells[idx]) cells[idx].classList.add('on');
+  },
+
+  /**
+   * HSL文字列を16進数カラーコードに変換する
+   * @param  {string} hsl  例: "hsl(180, 78%, 52%)"
+   * @returns {string}     例: "#1eb8b8"
+   */
+  toHex(hsl) {
+    const m = hsl.match(/hsl\((\d+),\s*([\d.]+)%,\s*([\d.]+)%\)/);
+    if (!m) return '#888888';
+
+    let h = +m[1] / 360;
+    let s = +m[2] / 100;
+    let l = +m[3] / 100;
+    let r, g, b;
+
+    if (!s) {
+      // グレースケール
+      r = g = b = l;
+    } else {
+      const hue2rgb = (p, q, t) => {
+        t = t < 0 ? t + 1 : t > 1 ? t - 1 : t;
+        if (t < 1/6) return p + (q - p) * 6 * t;
+        if (t < 1/2) return q;
+        if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+        return p;
+      };
+      const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+      const p = 2 * l - q;
+      r = hue2rgb(p, q, h + 1/3);
+      g = hue2rgb(p, q, h);
+      b = hue2rgb(p, q, h - 1/3);
+    }
+
+    return '#' + [r, g, b]
+      .map(x => Math.round(x * 255).toString(16).padStart(2, '0'))
+      .join('');
+  }
+};
+
+</script>
+<script>/* draw.js */
+/**
+ * draw.js — キャンバス描画エンジン
+ *
+ * 修正済みバグ:
+ *   #7  init(false) でも常に白背景を塗る
+ *   #9  devicePixelRatio 対応 (Retina/HiDPI)
+ *   #10 消しゴム時にカーソルを変更
+ *   #6  消しゴムOFF時に選択色セルのハイライトを復元
+ *
+ * 依存: state.js, palette.js
+ */
+
+const Draw = {
+  cv:    null,  // HTMLCanvasElement
+  ctx:   null,  // CanvasRenderingContext2D
+  hist:  [],    // undo/redo 履歴 (dataURL 配列)
+  hi:    -1,    // 現在の履歴インデックス
+  ready: false, // イベントリスナー登録済みか
+
+  // HiDPI用: JS内では常にこの論理サイズで描画する
+  logW: 0,
+  logH: 0,
+  dpr:  1,
+
+  // ── 初期化 ──────────────────────────────────────
+
+  /**
+   * キャンバスを初期化する
+   * @param {boolean} fresh  true=新規(履歴リセット) / false=サイズ再設定のみ
+   */
+  init(fresh) {
+    this.cv  = document.getElementById('draw-canvas');
+    this.ctx = this.cv.getContext('2d');
+
+    const cw = document.getElementById('cw');
+
+    // BUG FIX #9: devicePixelRatio を考慮した物理ピクセル解像度
+    const dpr  = window.devicePixelRatio || 1;
+    // toolbar=50px, footer=48px を除いた高さ
+    const logW = cw.offsetWidth  || (window.innerWidth  - 196);
+    const logH = cw.offsetHeight || (window.innerHeight - 98);
+
+    this.logW = logW;
+    this.logH = logH;
+    this.dpr  = dpr;
+
+    // 物理ピクセルでキャンバスサイズを設定
+    this.cv.width  = Math.round(logW * dpr);
+    this.cv.height = Math.round(logH * dpr);
+
+    // CSS表示サイズは論理ピクセルに固定 (HiDPI対応の核心)
+    this.cv.style.width  = logW + 'px';
+    this.cv.style.height = logH + 'px';
+
+    // setTransform で変換行列をリセット+スケール設定
+    // ※ ctx.scale() を使うと init() 呼び出し毎にスケールが累積するためNG
+    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    // BUG FIX #7: サイズ変更でキャンバスがクリアされるので常に白塗り
+    this.ctx.fillStyle = '#ffffff';
+    this.ctx.fillRect(0, 0, logW, logH);
+
+    if (fresh) {
+      this.hist = [];
+      this.hi   = -1;
+      this.push();
+    }
+
+    if (!this.ready) {
+      this._bindEvents();
+      this.ready = true;
+    }
+
+    this._updButtons();
+  },
+
+  // ── 履歴 (Undo/Redo) ────────────────────────────
+
+  /**
+   * R4-1 FIX: webp (高圧縮) か jpeg (フォールバック) で保存する
+   * PNG の quality 引数は仕様上無視されるため、32ステップ × フル解像度PNG は
+   * 大画面・HiDPI 環境で数百MB のメモリを消費しタブがクラッシュしうる
+   * webp(0.85) はほぼ同品質で PNG の 1/5〜1/10 サイズになる
+   */
+  _snapURL() {
+    const url = this.cv.toDataURL('image/webp', 0.85);
+    // webp 非対応ブラウザ (旧 Safari 等) は 'data:image/png' を返す
+    return url.startsWith('data:image/webp')
+      ? url
+      : this.cv.toDataURL('image/jpeg', 0.85);
+  },
+
+  /** 現在のキャンバス状態を履歴に積む */
+  push() {
+    // redo 用の先読みを削除
+    this.hist = this.hist.slice(0, this.hi + 1);
+    this.hist.push(this._snapURL()); // R4-1 FIX: webp/jpeg で圧縮して積む
+    this.hi = this.hist.length - 1;
+
+    // メモリ節約: 最大32ステップ
+    if (this.hist.length > 32) {
+      this.hist.shift();
+      this.hi--;
+    }
+    this._updButtons();
+  },
+
+  /** undo/redo ボタンの活性状態を更新 */
+  _updButtons() {
+    document.getElementById('btn-undo').style.opacity =
+      this.hi > 0                      ? '1' : '0.3';
+    document.getElementById('btn-redo').style.opacity =
+      this.hi < this.hist.length - 1 ? '1' : '0.3';
+  },
+
+  /**
+   * 指定インデックスの履歴からキャンバスを復元する
+   * HiDPI: drawImage の描画先は論理サイズで指定する
+   */
+  _restoreAt(idx) {
+    const img = new Image();
+    img.onload = () => {
+      this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
+      this.ctx.clearRect(0, 0, this.logW, this.logH);
+      // 論理サイズで描画することで DPR に関係なく正しく表示される
+      this.ctx.drawImage(img, 0, 0, this.logW, this.logH);
+    };
+    // R3-3 FIX: データURLが壊れていた場合もUIが固まらないようにする
+    img.onerror = () => {
+      console.error('[Draw._restoreAt] 履歴データの読み込みに失敗 (index:', idx, ')');
+      toast('履歴の復元に失敗しました', 'err');
+    };
+    img.src = this.hist[idx];
+    this._updButtons();
+  },
+
+  undo() {
+    if (this.hi <= 0) return;
+    this.hi--;
+    this._restoreAt(this.hi);
+  },
+
+  redo() {
+    if (this.hi >= this.hist.length - 1) return;
+    this.hi++;
+    this._restoreAt(this.hi);
+  },
+
+  // ── キャンバス操作 ──────────────────────────────
+
+  /** キャンバスを白紙にリセットする */
+  clear() {
+    // BUG FIX A: init() の setTimeout 完了前に呼ばれても安全に処理する
+    if (!this.ctx) {
+      toast('準備中です。少し待ってから試してください', 'info');
+      return;
+    }
+    this.ctx.fillStyle = '#ffffff';
+    this.ctx.fillRect(0, 0, this.logW, this.logH);
+    this.push();
+  },
+
+  /** 現在の描画内容をlocalStorageに保存する */
+  save() {
+    // BUG FIX F: null 時に分かりやすいメッセージを表示
+    if (!this.cv) {
+      toast('準備中です。少し待ってから試してください', 'info');
+      return;
+    }
+    try {
+      localStorage.setItem('aigc_canvas', JSON.stringify({
+        image: this.cv.toDataURL('image/png', 0.9),
+        mode:  S.gameMode,
+        ts:    Date.now()
+      }));
+      toast('💾 保存しました！', 'ok');
+    } catch (e) {
+      // localStorage 容量超過など
+      toast('保存に失敗しました: ' + e.message, 'err');
+    }
+  },
+
+  // ── 描画処理 ────────────────────────────────────
+
+  /**
+   * ポインタ座標をキャンバス論理座標に変換する
+   * @returns {{ x: number, y: number }}
+   */
+  _getXY(e) {
+    const r   = this.cv.getBoundingClientRect();
+    const src = e.touches ? e.touches[0] : e;
+    return {
+      x: src.clientX - r.left,
+      y: src.clientY - r.top
+    };
+  },
+
+  /**
+   * 指定座標に描画する (ドットまたはラインストローク)
+   * ctx は setTransform(dpr,...) 済みなので論理座標をそのまま使う
+   */
+  _paint(x, y, fromX, fromY) {
+    const color = S.eraser ? '#ffffff' : S.color;
+    // R2-3 FIX: fillStyle は _paint 内で fill() を呼ばないため不要。削除。
+    this.ctx.strokeStyle = color;
+    this.ctx.lineWidth   = S.brushR * 2;
+    this.ctx.lineCap     = 'round';
+    this.ctx.lineJoin    = 'round';
+
+    this.ctx.beginPath();
+    if (fromX !== undefined) {
+      // ドラッグ中: 前の点から現在の点へライン
+      this.ctx.moveTo(fromX, fromY);
+      this.ctx.lineTo(x, y);
+    } else {
+      // クリック: 微小なラインでドットを描く
+      this.ctx.moveTo(x, y);
+      this.ctx.lineTo(x + 0.01, y + 0.01);
+    }
+    this.ctx.stroke();
+  },
+
+  _onDown(e) {
+    e.preventDefault();
+    S.drawing = true;
+    const p   = this._getXY(e);
+    S.lx = p.x;
+    S.ly = p.y;
+    this._paint(p.x, p.y);
+  },
+
+  _onMove(e) {
+    e.preventDefault();
+    if (!S.drawing) return;
+    const p = this._getXY(e);
+    this._paint(p.x, p.y, S.lx, S.ly);
+    S.lx = p.x;
+    S.ly = p.y;
+  },
+
+  _onUp(e) {
+    e.preventDefault();
+    if (S.drawing) {
+      S.drawing = false;
+      this.push(); // ストローク完了で履歴に積む
+    }
+  },
+
+  /** マウス・タッチイベントをキャンバスにバインドする (1回のみ) */
+  _bindEvents() {
+    const cv = this.cv;
+    cv.addEventListener('mousedown',  e => this._onDown(e));
+    cv.addEventListener('mousemove',  e => this._onMove(e));
+    cv.addEventListener('mouseup',    e => this._onUp(e));
+    cv.addEventListener('mouseleave', e => this._onUp(e));
+    cv.addEventListener('touchstart',  e => this._onDown(e), { passive: false });
+    cv.addEventListener('touchmove',   e => this._onMove(e), { passive: false });
+    cv.addEventListener('touchend',    e => this._onUp(e),   { passive: false });
+    // BUG FIX B: touchcancel がないと着信・通知割込み時に S.drawing=true のまま固まる
+    cv.addEventListener('touchcancel', e => this._onUp(e),   { passive: false });
+  },
+
+  // ── ツール操作 ──────────────────────────────────
+
+  /**
+   * ブラシサイズを変更する
+   * @param {number} r    半径 (論理px)
+   * @param {HTMLElement} btn クリックされたボタン要素
+   */
+  setBrush(r, btn) {
+    S.brushR = r;
+    document.querySelectorAll('.bsz').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+  },
+
+  /**
+   * 消しゴムのON/OFFを切り替える
+   *
+   * BUG FIX #6: OFF時に選択色セルのハイライトを復元
+   * BUG FIX #10: ON/OFFでカーソルを切り替え
+   */
+  toggleEraser() {
+    S.eraser = !S.eraser;
+
+    const btn = document.getElementById('eraser-btn');
+    btn.classList.toggle('on', S.eraser);
+
+    // カーソルを消しゴムモードに対応させる
+    if (this.cv) {
+      this.cv.classList.toggle('eraser-mode', S.eraser);
+    }
+
+    if (S.eraser) {
+      // 消しゴムON: 色セルの選択ハイライトを外す
+      document.querySelectorAll('.cc').forEach(c => c.classList.remove('on'));
+    } else {
+      // BUG FIX #6: 消しゴムOFF: 以前の選択色セルを再ハイライト
+      const cells = document.querySelectorAll('.cc');
+      if (Palette.selIdx >= 0 && cells[Palette.selIdx]) {
+        cells[Palette.selIdx].classList.add('on');
+      }
+    }
+  }
+};
+
+</script>
+<script>/* settings.js */
+/**
+ * settings.js — API設定・接続管理
+ *
+ * 修正済みバグ:
+ *   #3  Settings.load() の JSON.parse に try-catch を追加
+ *
+ * 依存: state.js
+ */
+
+const Settings = {
+
+  _isConnecting: false, // R1-1 FIX: 連打による並走リクエストを防ぐフラグ
+
+  // ── プロバイダー選択 ──────────────────────────────
+
+  /**
+   * AIプロバイダーを選択し、対応するモデル一覧をセレクトに反映する
+   * @param {string} p 'claude' | 'gemini' | 'openai'
+   */
+  setProvider(p) {
+    S.provider = p;
+
+    // ボタンのアクティブ表示を更新
+    document.querySelectorAll('.pb').forEach(btn => {
+      btn.className = 'pb';
+      const id = btn.id.replace('pb-', '');
+      if (id === p) btn.classList.add('p-' + p);
+    });
+
+    // モデル一覧をセレクトに展開
+    const sel = document.getElementById('model-sel');
+    sel.innerHTML = MODELS[p]
+      .map(m => `<option value="${m.v}">${m.l}</option>`)
+      .join('');
+
+    S.model      = MODELS[p][0].v;
+    sel.onchange = e => { S.model = e.target.value; };
+
+    // 前回の接続結果をクリア
+    document.getElementById('st-msg').style.display = 'none';
+  },
+
+  // ── 接続テスト ───────────────────────────────────
+
+  /**
+   * 選択中のプロバイダーに最小リクエストを送り、APIキーを検証する
+   */
+  async testConnect() {
+    // R1-1 FIX: 接続テスト中の連打を防ぐ
+    if (this._isConnecting) {
+      toast('接続テスト中です。しばらくお待ちください', 'info');
+      return;
+    }
+
+    const key  = document.getElementById('key-inp').value.trim();
+    const selV = document.getElementById('model-sel').value;
+    if (selV) S.model = selV;
+
+    if (!S.provider) { toast('プロバイダーを選択してください', 'err'); return; }
+    if (!key)         { toast('APIキーを入力してください',    'err'); return; }
+
+    S.apiKey = key;
+    this._isConnecting = true;
+
+    const msg         = document.getElementById('st-msg');
+    const connectBtn  = document.getElementById('btn-connect');
+    msg.className     = 'st-msg st-loading';
+    msg.style.display = 'block';
+    msg.textContent   = '接続テスト中...';
+    connectBtn.disabled = true;
+
+    try {
+      let ok = false;
+
+      if (S.provider === 'claude') {
+        const res = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type':    'application/json',
+            'x-api-key':       key,
+            'anthropic-version': '2023-06-01',
+            'anthropic-dangerous-direct-browser-access': 'true'
+          },
+          body: JSON.stringify({
+            model:    S.model,
+            max_tokens: 5,
+            messages: [{ role: 'user', content: 'Hi' }]
+          })
+        });
+        const d = await res.json();
+        ok = !!d.id;
+
+      } else if (S.provider === 'gemini') {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${S.model}:generateContent?key=${key}`;
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: 'Hi' }] }]
+          })
+        });
+        const d = await res.json();
+        ok = !!d.candidates;
+
+      } else if (S.provider === 'openai') {
+        const res = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type':  'application/json',
+            'Authorization': 'Bearer ' + key
+          },
+          body: JSON.stringify({
+            model:    S.model,
+            max_tokens: 5,
+            messages: [{ role: 'user', content: 'Hi' }]
+          })
+        });
+        const d = await res.json();
+        ok = !!d.choices;
+      }
+
+      if (ok) {
+        this._onSuccess(msg);
+      } else {
+        throw new Error('レスポンスが不正です');
+      }
+
+    } catch (e) {
+      const isCors = e.message.includes('fetch')
+                  || e.message.includes('Failed')
+                  || e.message.toLowerCase().includes('cors');
+      if (isCors) {
+        msg.className   = 'st-msg st-ok';
+        msg.textContent = '⚠ CORS制限により直接確認できませんでしたが、設定を保存しました。実際の生成時に検証されます。';
+        this._saveAndMarkConnected();
+      } else {
+        msg.className   = 'st-msg st-err';
+        msg.textContent = '✗ 接続失敗: ' + e.message;
+      }
+    } finally {
+      // R1-1 FIX: 必ずフラグを解除し、ボタンを再活性化する
+      this._isConnecting    = false;
+      connectBtn.disabled   = false;
+    }
+  },
+
+  _onSuccess(msgEl) {
+    msgEl.className   = 'st-msg st-ok';
+    msgEl.textContent = '✓ 接続成功！AIと通信できました';
+    this._saveAndMarkConnected();
+  },
+
+  _saveAndMarkConnected() {
+    S.connected = true;
+    this._persist();
+    this._updateDot();
+  },
+
+  // ── 永続化 ──────────────────────────────────────
+
+  /** 設定を localStorage に保存する */
+  _persist() {
+    localStorage.setItem('aigc_cfg', JSON.stringify({
+      provider: S.provider,
+      apiKey:   S.apiKey,
+      model:    S.model
+    }));
+  },
+
+  /**
+   * 起動時に保存済み設定を復元する
+   *
+   * BUG FIX #3: JSON.parse を try-catch で囲む
+   *             データが破損していてもクラッシュしない
+   */
+  load() {
+    try {
+      const raw = localStorage.getItem('aigc_cfg');
+      if (!raw) return;
+
+      const d = JSON.parse(raw); // ← 破損データでも例外をキャッチ
+      if (!d || !d.provider) return;
+
+      this.setProvider(d.provider);
+
+      if (d.apiKey) {
+        const trimmedKey = d.apiKey.trim(); // R2-1 FIX: 保存時に空白が混入していても確実に除去
+        document.getElementById('key-inp').value = trimmedKey;
+        S.apiKey = trimmedKey;
+      }
+      if (d.model) {
+        const sel = document.getElementById('model-sel');
+        sel.value = d.model;
+        // R4-1 FIX: 廃止・存在しないモデル名の場合 sel.value は '' になる。
+        // sel.value が設定できた場合のみ S.model を更新し、
+        // できなかった場合は setProvider() が設定した先頭モデルをそのまま使う。
+        if (sel.value) {
+          S.model = sel.value;
+        } else {
+          console.warn('[Settings.load] 保存されたモデル "' + d.model + '" が見つかりません。デフォルトモデルを使用します。');
+        }
+      }
+
+      S.connected = true;
+      this._updateDot();
+
+    } catch (err) {
+      // 破損データをクリアしてサイレントに続行
+      console.warn('[Settings.load] 設定データが破損しています。クリアします:', err);
+      localStorage.removeItem('aigc_cfg');
+    }
+  },
+
+  // ── UI ──────────────────────────────────────────
+
+  /** ホーム画面のAPI接続インジケーターを更新する */
+  _updateDot() {
+    const el  = document.getElementById('api-dot');
+    const lbl = document.getElementById('api-dot-lbl');
+    el.classList.toggle('ok', S.connected);
+    const names = { claude: 'Claude', gemini: 'Gemini', openai: 'ChatGPT' };
+    lbl.textContent = S.connected
+      ? (names[S.provider] || '') + ' 接続済'
+      : 'API未接続';
+  }
+};
+
+</script>
+<script>/* api.js */
+/**
+ * api.js — AI APIへのリクエスト処理
+ *
+ * 修正済みバグ:
+ *   #1  Gemini REST API のフィールド名を snake_case → camelCase に修正
+ *       (inline_data → inlineData, mime_type → mimeType)
+ *       Google の REST API 規約は camelCase であり、snake_case では
+ *       画像データが無視されゲームが正しく生成されない。
+ *
+ * 依存: state.js
+ */
+
+const API = {
+
+  // ── Claude (Anthropic) ──────────────────────────
+
+  /**
+   * Claude API に画像+テキストを送信してゲームコードを生成する
+   * @param {string} b64    Base64エンコードされたPNG画像
+   * @param {string} prompt 生成指示テキスト
+   * @returns {Promise<string>} 生成されたコードテキスト
+   */
+  async claude(b64, prompt) {
+    setLoad('Claude が生成中...', 35);
+
+    // BUG FIX C: 90秒タイムアウト。サーバーがハングしてもローディング画面に永久に残らない
+    const controller = new AbortController();
+    const timerId    = setTimeout(() => controller.abort(), 90000);
+
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        signal: controller.signal,
+        headers: {
+          'Content-Type':    'application/json',
+          'x-api-key':       S.apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model:      S.model,
+          max_tokens: 8000,
+          messages: [{
+            role: 'user',
+            content: [
+              { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: b64 } },
+              { type: 'text',  text: prompt }
+            ]
+          }]
+        })
+      });
+
+      clearTimeout(timerId);
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error?.message || `Claude API エラー: HTTP ${res.status}`);
+      }
+
+      const d = await res.json();
+      setLoad('コードを受信しました...', 78);
+      return d.content?.find(c => c.type === 'text')?.text || '';
+
+    } catch (e) {
+      clearTimeout(timerId);
+      if (e.name === 'AbortError') {
+        throw new Error('タイムアウト: Claude が90秒以内に応答しませんでした');
+      }
+      throw e;
+    }
+  },
+
+  // ── Gemini (Google) ──────────────────────────────
+
+  /**
+   * Gemini API に画像+テキストを送信してゲームコードを生成する。
+   * 全モデル共通でマルチモーダル (画像+テキスト) 形式を使用する。
+   *
+   * @param {string} b64    Base64エンコードされた JPEG 画像
+   * @param {string} prompt 生成指示テキスト
+   * @returns {Promise<string>} 生成されたコードテキスト
+   */
+  async gemini(b64, prompt) {
+    setLoad('Gemini が生成中...', 35);
+
+    const url        = `https://generativelanguage.googleapis.com/v1beta/models/${S.model}:generateContent?key=${S.apiKey}`;
+    const controller = new AbortController();
+    const timerId    = setTimeout(() => controller.abort(), 90000);
+
+    try {
+      const res = await fetch(url, {
+        method:  'POST',
+        signal:  controller.signal,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{
+            parts: [
+              { inlineData: { mimeType: 'image/jpeg', data: b64 } },
+              { text: prompt }
+            ]
+          }],
+          generationConfig: { maxOutputTokens: 8192 }
+        })
+      });
+
+      clearTimeout(timerId);
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error?.message || `Gemini API エラー: HTTP ${res.status}`);
+      }
+
+      const d = await res.json();
+      setLoad('コードを受信しました...', 78);
+      return d.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+    } catch (e) {
+      clearTimeout(timerId);
+      if (e.name === 'AbortError') {
+        throw new Error('タイムアウト: Gemini が90秒以内に応答しませんでした');
+      }
+      throw e;
+    }
+  },
+
+  // ── ChatGPT (OpenAI) ─────────────────────────────
+
+  /**
+   * OpenAI API に画像+テキストを送信してゲームコードを生成する
+   * @param {string} b64    Base64エンコードされたPNG画像
+   * @param {string} prompt 生成指示テキスト
+   * @returns {Promise<string>} 生成されたコードテキスト
+   */
+  async openai(b64, prompt) {
+    setLoad('ChatGPT が生成中...', 35);
+
+    const controller = new AbortController();
+    const timerId    = setTimeout(() => controller.abort(), 90000);
+
+    try {
+      const res = await fetch('https://api.openai.com/v1/chat/completions', {
+        method:  'POST',
+        signal:  controller.signal,
+        headers: {
+          'Content-Type':  'application/json',
+          'Authorization': 'Bearer ' + S.apiKey
+        },
+        body: JSON.stringify({
+          model:      S.model,
+          max_tokens: 8000,
+          messages: [{
+            role: 'user',
+            content: [
+              { type: 'image_url', image_url: { url: 'data:image/jpeg;base64,' + b64 } },
+              { type: 'text',      text: prompt }
+            ]
+          }]
+        })
+      });
+
+      clearTimeout(timerId);
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error?.message || `OpenAI API エラー: HTTP ${res.status}`);
+      }
+
+      const d = await res.json();
+      setLoad('コードを受信しました...', 78);
+      return d.choices?.[0]?.message?.content || '';
+
+    } catch (e) {
+      clearTimeout(timerId);
+      if (e.name === 'AbortError') {
+        throw new Error('タイムアウト: ChatGPT が90秒以内に応答しませんでした');
+      }
+      throw e;
+    }
+  }
+};
+
+</script>
+<script>/* nav.js */
+/**
+ * nav.js — 画面遷移・ゲーム生成フロー
+ *
+ * 修正済みバグ:
+ *   #2  loadSave() の JSON.parse に try-catch を追加
+ *   #4  complete() で Draw.cv の null チェックを追加
+ *   #5  ローディングバーを生成開始前に 0% にリセット
+ *
+ * 依存: state.js, draw.js, palette.js, settings.js, api.js
+ */
+
+const Nav = {
+
+  _initTimer: null, // R1-2 FIX: 古い init タイマーをキャンセルするための参照
+
+  // ── 画面遷移 ─────────────────────────────────────
+
+  /**
+   * 指定した画面に切り替える
+   * @param {string} id  'home' | 'settings' | 'mode' | 'palette' | 'loading' | 'game'
+   */
+  go(id) {
+    document.querySelectorAll('.scr').forEach(s => s.classList.remove('on'));
+    const target = document.getElementById('s-' + id);
+    if (target) {
+      target.classList.add('on');
+    } else {
+      console.error('[Nav.go] 存在しない画面ID:', id);
+    }
+  },
+
+  // ── ホーム ───────────────────────────────────────
+
+  startNew() {
+    this.go('mode');
+  },
+
+  // ── モード選択 ───────────────────────────────────
+
+  /**
+   * ゲームモードを選択してパレット画面へ遷移する
+   * @param {string} mode 'block' | '3d' | '2.5d'
+   */
+  selectMode(mode) {
+    S.gameMode = mode;
+    const labels = { block: '🧱 ブロック', '3d': '🌐 3D', '2.5d': '🎮 2.5D' };
+    document.getElementById('mode-pill').textContent = labels[mode] || mode;
+
+    this.go('palette');
+    // R1-2 FIX: 前の stale init タイマーをキャンセルしてから新規登録
+    if (this._initTimer) { clearTimeout(this._initTimer); this._initTimer = null; }
+    this._initTimer = setTimeout(() => { Draw.init(true); this._initTimer = null; }, 60);
+  },
+
+  // ── 続きから ─────────────────────────────────────
+
+  /**
+   * localStorage から保存済み描画を読み込みパレット画面で再開する
+   *
+   * BUG FIX #2: JSON.parse を try-catch で囲む
+   *             破損データでもクラッシュしない
+   */
+  loadSave() {
+    let data;
+    try {
+      const raw = localStorage.getItem('aigc_canvas');
+      if (!raw) {
+        toast('保存されたデータがありません', 'err');
+        return;
+      }
+      data = JSON.parse(raw);
+      // R3-1 FIX: JSON.parse('null') は null を返し try-catch をパスするが
+      // 後続の data.mode で TypeError になる。null/非オブジェクトを明示的に弾く。
+      if (!data || typeof data !== 'object' || Array.isArray(data)) {
+        throw new Error('不正なデータ形式');
+      }
+    } catch (err) {
+      console.warn('[Nav.loadSave] 保存データが破損しています:', err);
+      toast('保存データが破損しています。新規作成してください。', 'err');
+      localStorage.removeItem('aigc_canvas');
+      return;
+    }
+
+    S.gameMode = data.mode || 'block';
+    // BUG FIX E: 不正な mode 値を拒否してデフォルトに戻す
+    const VALID_MODES = ['block', '3d', '2.5d'];
+    if (!VALID_MODES.includes(S.gameMode)) {
+      console.warn('[Nav.loadSave] 不正なgameMode:', S.gameMode, '→ block にリセット');
+      S.gameMode = 'block';
+    }
+    const labels = { block: '🧱 ブロック', '3d': '🌐 3D', '2.5d': '🎮 2.5D' };
+    document.getElementById('mode-pill').textContent = labels[S.gameMode] || '🎮';
+
+    this.go('palette');
+
+    // R1-2 FIX: selectMode の stale init タイマーが残っていればキャンセル
+    if (this._initTimer) { clearTimeout(this._initTimer); this._initTimer = null; }
+
+    setTimeout(() => {
+      // BUG FIX #7: init(false) = サイズ設定 + 白塗りのみ (履歴リセットなし)
+      Draw.init(false);
+
+      const img = new Image();
+
+      img.onload = () => {
+        // 保存画像をキャンバス論理サイズで描画
+        Draw.ctx.setTransform(Draw.dpr, 0, 0, Draw.dpr, 0, 0);
+        Draw.ctx.clearRect(0, 0, Draw.logW, Draw.logH);
+        Draw.ctx.fillStyle = '#ffffff';
+        Draw.ctx.fillRect(0, 0, Draw.logW, Draw.logH);
+        Draw.ctx.drawImage(img, 0, 0, Draw.logW, Draw.logH);
+
+        // R5-2 FIX: _snapURL() で webp/jpeg 圧縮 (png の quality 引数は無効)
+        Draw.hist = [Draw._snapURL()];
+        Draw.hi   = 0;
+        Draw._updButtons();
+
+        toast('続きから再開しました ✓', 'ok');
+      };
+
+      img.onerror = () => {
+        toast('画像データの読み込みに失敗しました', 'err');
+      };
+
+      img.src = data.image;
+    }, 60);
+  },
+
+  // ── ゲーム生成 ───────────────────────────────────
+
+  /**
+   * 現在のキャンバス描画を AI に送信してゲームを生成する
+   *
+   * BUG FIX #4: Draw.cv の null チェック
+   * BUG FIX #5: ローディングバーを 0% にリセットしてから開始
+   */
+  async complete() {
+    // BUG FIX #4: キャンバス未初期化チェック
+    if (!Draw.cv) {
+      toast('キャンバスが初期化されていません', 'err');
+      return;
+    }
+    if (!S.connected || !S.apiKey) {
+      toast('先に設定でAPIキーを入力してください', 'err');
+      return;
+    }
+    // BUG FIX D: provider が null のままだと API 呼び出しを全スキップして空ゲームを生成してしまう
+    if (!S.provider) {
+      toast('設定画面でAIプロバイダーを選択してください', 'err');
+      return;
+    }
+
+    // R4-2 FIX: 4K+HiDPI 環境では物理キャンバスが巨大になり API の画像上限を超える
+    // 長辺を最大 1024px に縮小してから JPEG として送信する
+    // (AIは描画の内容を理解するのに十分な解像度があれば良い)
+    const MAX_SIDE = 1024;
+    let sendCanvas = Draw.cv;
+    if (Draw.logW > MAX_SIDE || Draw.logH > MAX_SIDE) {
+      const ratio   = Math.min(MAX_SIDE / Draw.logW, MAX_SIDE / Draw.logH);
+      const tmpCv   = document.createElement('canvas');
+      tmpCv.width   = Math.round(Draw.logW * ratio);
+      tmpCv.height  = Math.round(Draw.logH * ratio);
+      tmpCv.getContext('2d').drawImage(Draw.cv, 0, 0, tmpCv.width, tmpCv.height);
+      sendCanvas = tmpCv;
+    }
+    const b64 = sendCanvas.toDataURL('image/jpeg', 0.92).split(',')[1];
+
+    // モード別の生成プロンプト
+    // 【画面比率修正】AIが body margin や canvas サイズを省略するため、
+    // フルスクリーン要件を明示的にプロンプトに含める
+    const LAYOUT_RULES =
+      'レイアウト必須要件: ' +
+      '① body に margin:0; padding:0; overflow:hidden; background:#111; を必ず設定する。' +
+      '② canvas のサイズは width=window.innerWidth, height=window.innerHeight で設定する。' +
+      '③ window.addEventListener("resize",関数) でリサイズに対応する。' +
+      '④ canvas を document.body.appendChild で body 直下に配置し、display:block にする。';
+
+    const prompts = {
+      block: 'すべての世界がブロックで構成され、画像に一致するゲームを生成してください。またコードのみを出力してください。HTML5 CanvasとJavaScriptのみで実装し、外部ライブラリ不使用で1つのHTMLファイルとして完結させてください。' + LAYOUT_RULES,
+      '3d':  'キャラクターや、オブジェクトがすべて3Dで構成された、画像に合うゲームを生成してください。またコードのみを出力してください。Three.js(CDN)を使い、1つのHTMLファイルとして完結させてください。' + LAYOUT_RULES,
+      '2.5d':'2.5D世界のゲームを画像通りに生成してください。またコードのみを出力してください。HTML5 CanvasとJavaScriptを使い、1つのHTMLファイルとして完結させてください。' + LAYOUT_RULES
+    };
+
+    this.go('loading');
+
+    // BUG FIX #5: バーをリセット (前回が 97% のままだと逆走アニメーションが起きる)
+    const bar = document.getElementById('ld-bar');
+    bar.style.transition = 'none';   // トランジションを一時停止
+    bar.style.width      = '0%';
+    bar.offsetWidth;                  // 強制リフロー (リセットを確定させる)
+    bar.style.transition = '';        // トランジション再開
+
+    setLoad('画像を送信しています...', 8);
+
+    try {
+      let code = '';
+
+      if      (S.provider === 'claude') code = await API.claude(b64, prompts[S.gameMode]);
+      else if (S.provider === 'gemini') code = await API.gemini(b64, prompts[S.gameMode]);
+      else if (S.provider === 'openai') code = await API.openai(b64, prompts[S.gameMode]);
+
+      setLoad('ゲームを構築しています...', 88);
+      await sleep(400);
+      setLoad('起動中...', 97);
+      await sleep(250);
+
+      this._launchGame(extractCode(code));
+
+    } catch (err) {
+      console.error('[Nav.complete] API エラー:', err);
+      this.go('palette');
+      toast('エラー: ' + err.message, 'err');
+    }
+  },
+
+  /**
+   * 生成されたHTMLにフルスクリーン正規化CSS/JSを注入する
+   *
+   * AIが body margin や canvas サイズを省略した場合に備えた二重対策:
+   *   - body margin/padding をリセット
+   *   - canvas を viewport 中央にフィット表示 (縦横比を維持)
+   *   - 動的に生成された canvas にも対応 (MutationObserver)
+   *
+   * @param {string} html  生成された生HTMLコード
+   * @returns {string}     正規化済みHTMLコード
+   */
+  _normalizeGameHTML(html) {
+    // ① body リセット + canvas ブロック化 CSS
+    const css =
+      '<style id="_aigc_norm">' +
+      '*{box-sizing:border-box}' +
+      'html,body{' +
+        'margin:0!important;padding:0!important;' +
+        'width:100%!important;height:100%!important;' +
+        'overflow:hidden;background:#111;' +
+      '}' +
+      'canvas{display:block}' +
+      '</style>';
+
+    // ② canvas を viewport 中央にフィット (縦横比維持) するスクリプト
+    const script =
+      '<script id="_aigc_resize">' +
+      '(function(){' +
+        // canvas 1枚のとき中央フィット
+        'function fit(){' +
+          'var cvs=document.querySelectorAll("canvas");' +
+          'if(cvs.length!==1)return;' +
+          'var c=cvs[0];' +
+          'var cw=c.width||window.innerWidth;' +
+          'var ch=c.height||window.innerHeight;' +
+          'var sx=window.innerWidth/cw;' +
+          'var sy=window.innerHeight/ch;' +
+          'var s=Math.min(sx,sy);' +
+          'c.style.position="absolute";' +
+          'c.style.width=(cw*s)+"px";' +
+          'c.style.height=(ch*s)+"px";' +
+          'c.style.left=((window.innerWidth -cw*s)/2)+"px";' +
+          'c.style.top= ((window.innerHeight-ch*s)/2)+"px";' +
+        '}' +
+        // canvas が後から生成される場合に備えた MutationObserver
+        'function observe(){' +
+          'var ob=new MutationObserver(function(){fit();});' +
+          'ob.observe(document.body,{childList:true,subtree:true});' +
+        '}' +
+        'window.addEventListener("load",function(){fit();observe();});' +
+        'window.addEventListener("resize",fit);' +
+        // 念のため遅延実行
+        'setTimeout(fit,100);' +
+        'setTimeout(fit,600);' +
+      '})();' +
+      '<\/script>';
+
+    // <head> 末尾に CSS を挿入
+    if (html.includes('</head>')) {
+      html = html.replace('</head>', css + '</head>');
+    } else if (html.includes('<head>')) {
+      html = html.replace('<head>', '<head>' + css);
+    } else {
+      html = css + html;
+    }
+
+    // </body> 直前にスクリプトを挿入
+    if (html.includes('</body>')) {
+      html = html.replace('</body>', script + '</body>');
+    } else {
+      html = html + script;
+    }
+
+    return html;
+  },
+
+  /**
+   * 生成されたHTMLコードをiframe内で実行する
+   * @param {string} html  表示するHTMLコード
+   */
+  _launchGame(html) {
+    // 画面比率修正: body/canvas レイアウトを自動補正してから表示
+    const normalized = this._normalizeGameHTML(html);
+
+    const fr   = document.getElementById('game-frame');
+    const prev = fr.src;
+    // 前回の Blob URL を解放してメモリリークを防ぐ
+    if (prev && prev.startsWith('blob:')) URL.revokeObjectURL(prev);
+
+    const blob = new Blob([normalized], { type: 'text/html' });
+    fr.src = URL.createObjectURL(blob);
+    this.go('game');
+  },
+
+  // ── ゲーム → パレット ─────────────────────────────
+
+  /**
+   * ゲーム画面を終了してパレット画面に戻る
+   * Blob URL を解放してメモリを節約する
+   */
+  exitGame() {
+    const fr = document.getElementById('game-frame');
+    if (fr.src && fr.src.startsWith('blob:')) URL.revokeObjectURL(fr.src);
+    fr.src = 'about:blank';
+    this.go('palette');
+  }
+};
+
+</script>
+<script>/* main.js */
+/**
+ * main.js — アプリ初期化・イベント登録・グローバルヘルパー
+ *
+ * ■ GitHub Pages 対応の核心
+ *   HTML の onclick 属性を全廃し、ここで addEventListener を使って
+ *   すべてのボタン操作をバインドする。
+ *
+ *   理由: `const Nav = {}` などは window オブジェクトのプロパティに
+ *   ならないため、HTML inline onclick から参照できない環境がある。
+ *   addEventListener はスクリプトスコープ内で直接参照するので確実。
+ *
+ * 依存: state.js, palette.js, draw.js, settings.js, api.js, nav.js
+ *       (index.html で先にロード済み)
+ */
+
+// ═══════════════════════════════════════════════════
+//  グローバルヘルパー関数
+// ═══════════════════════════════════════════════════
+
+/**
+ * ローディング画面のステータスとプログレスバーを更新する
+ * @param {string} msg  表示するメッセージ
+ * @param {number} pct  バーの幅 (0〜100)
+ */
+function setLoad(msg, pct) {
+  document.getElementById('ld-status').textContent = msg;
+  document.getElementById('ld-bar').style.width    = pct + '%';
+}
+
+/**
+ * トースト通知を表示する (3.2秒後に自動消去)
+ * @param {string} msg   表示テキスト
+ * @param {string} type  'ok' | 'err' | 'info'
+ */
+function toast(msg, type) {
+  type = type || 'info';
+  var container = document.getElementById('toasts');
+  var el        = document.createElement('div');
+  el.className  = 'toast t-' + type;
+  el.textContent = msg;
+  container.appendChild(el);
+  setTimeout(function () {
+    el.style.opacity    = '0';
+    el.style.transform  = 'translateX(110%)';
+    el.style.transition = 'all .3s';
+    setTimeout(function () { el.remove(); }, 320);
+  }, 3200);
+}
+
+/**
+ * AI が返したテキストから HTML コードを抽出する
+ * @param  {string} txt  APIからの生テキスト
+ * @returns {string}     表示用HTMLコード
+ */
+/**
+ * 生成されたHTMLゲームをiframe内で正しく全画面表示するため
+ * CSSとJSを注入する。
+ *
+ * 修正内容:
+ *   - body のデフォルトマージン(8px)を除去  → 上部の黒帯を解消
+ *   - html/body を100vw×100vh に固定       → レイアウト崩れを防止
+ *   - DOCTYPE がなければ先頭に追加          → quirks mode を回避
+ *   - canvas に width/height 属性がない場合  → ビューポートサイズに自動リサイズ
+ *     (Three.js が自前でサイズ設定する場合は影響しない)
+ */
+function injectNormalize(html) {
+  var out = html.trim();
+
+  // DOCTYPE がなければ追加 (quirks mode 防止)
+  if (out.toLowerCase().indexOf('<!doctype') === -1) {
+    out = '<!DOCTYPE html>\n' + out;
+  }
+
+  // 注入するCSS
+  var css = '<style id="__aigc_fix__">\n' +
+    '*, *::before, *::after { box-sizing: border-box; }\n' +
+    'html {\n' +
+    '  height: 100%;\n' +
+    '  overflow: hidden;\n' +
+    '}\n' +
+    'body {\n' +
+    '  margin: 0 !important;\n' +
+    '  padding: 0 !important;\n' +
+    '  width: 100vw !important;\n' +
+    '  height: 100vh !important;\n' +
+    '  overflow: hidden;\n' +
+    '  background: #000;\n' +
+    '}\n' +
+    'canvas { display: block; }\n' +
+    '</style>';
+
+  // 注入するJS: width/height 属性がない canvas をビューポートサイズに合わせる
+  // Three.js など自前でサイズ設定するケースは hasAttribute チェックで除外
+  var js = '<script>\n' +
+    '(function(){\n' +
+    '  function fixCanvas(){\n' +
+    '    document.querySelectorAll("canvas").forEach(function(c){\n' +
+    '      if (!c.hasAttribute("width") && !c.hasAttribute("height")) {\n' +
+    '        c.width  = window.innerWidth;\n' +
+    '        c.height = window.innerHeight;\n' +
+    '      }\n' +
+    '    });\n' +
+    '  }\n' +
+    '  if (document.readyState === "loading") {\n' +
+    '    document.addEventListener("DOMContentLoaded", fixCanvas);\n' +
+    '  } else {\n' +
+    '    fixCanvas();\n' +
+    '  }\n' +
+    '})();\n' +
+    '<\/script>';
+
+  var inject = css + '\n' + js;
+
+  // </head> の直前に注入するのが最も安全
+  if (out.indexOf('</head>') !== -1) {
+    return out.replace('</head>', inject + '\n</head>');
+  }
+  // <head> があれば開始タグ直後に挿入
+  if (out.indexOf('<head>') !== -1) {
+    return out.replace('<head>', '<head>\n' + inject);
+  }
+  // <html> があれば head ごと挿入
+  if (/<html[^>]*>/i.test(out)) {
+    return out.replace(/<html[^>]*>/i, function(m) {
+      return m + '\n<head>\n' + inject + '\n</head>';
+    });
+  }
+  // どれもなければ先頭に追加
+  return '<!DOCTYPE html>\n<html>\n<head>\n' + inject +
+         '\n</head>\n<body>\n' + out + '\n</body>\n</html>';
+}
+
+function extractCode(txt) {
+  // R5-1 FIX: null / undefined が渡された場合 txt.match() がクラッシュするのを防ぐ
+  if (txt == null || typeof txt !== 'string') {
+    console.warn('[extractCode] 無効な入力値:', typeof txt);
+    return '<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"></head>' +
+           '<body style="margin:0;background:#111;color:#eee;display:flex;align-items:center;' +
+           'justify-content:center;height:100vh;font-family:sans-serif;">' +
+           '<div>AIからの応答が空でした。再度お試しください。</div></body></html>';
+  }
+
+  var m, html;
+
+  // パターン1: ```html ... ```
+  m = txt.match(/```html\s*([\s\S]*?)```/i);
+  if (m) { html = m[1].trim(); return injectNormalize(html); }
+
+  // パターン2: ``` ... ``` (言語指定あり/なし)
+  m = txt.match(/```(?:\w*\n)?([\s\S]*?)```/);
+  if (m) { html = m[1].trim(); return injectNormalize(html); }
+
+  // パターン3: HTMLらしき文字列をそのまま使う
+  var t = txt.trim();
+  if (t.indexOf('<!DOCTYPE') !== -1 ||
+      t.indexOf('<html')     !== -1 ||
+      t.indexOf('<canvas')   !== -1) {
+    return injectNormalize(t);
+  }
+
+  // フォールバック: 生テキストをエスケープして表示
+  var escaped = txt
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+
+  return '<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">' +
+    '<style>body{margin:0;background:#111;color:#eee;font-family:sans-serif;' +
+    'display:flex;align-items:center;justify-content:center;' +
+    'min-height:100vh;flex-direction:column;gap:20px;padding:20px;text-align:center}' +
+    'pre{background:#1a1a1a;padding:20px;border-radius:10px;overflow:auto;' +
+    'max-width:90vw;font-size:.8rem;text-align:left;white-space:pre-wrap}' +
+    '</style></head><body>' +
+    '<div style="font-size:1.5rem;font-weight:bold">🎮 生成されたゲーム</div>' +
+    '<pre>' + escaped + '</pre></body></html>';
+}
+
+/** 指定ミリ秒だけ待機する Promise */
+function sleep(ms) {
+  return new Promise(function (resolve) { setTimeout(resolve, ms); });
+}
+
+// ═══════════════════════════════════════════════════
+//  ボタン・DOM イベントのバインド
+//  (HTML の onclick 属性を使わずここで全登録する)
+// ═══════════════════════════════════════════════════
+
+function bindAll() {
+
+  // ── ホーム ──────────────────────────────────────
+  document.getElementById('btn-new')
+    .addEventListener('click', function () { Nav.startNew(); });
+
+  document.getElementById('btn-cont')
+    .addEventListener('click', function () { Nav.loadSave(); });
+
+  document.getElementById('btn-set')
+    .addEventListener('click', function () { Nav.go('settings'); });
+
+  // ── 設定 ────────────────────────────────────────
+  document.getElementById('pb-claude')
+    .addEventListener('click', function () { Settings.setProvider('claude'); });
+
+  document.getElementById('pb-gemini')
+    .addEventListener('click', function () { Settings.setProvider('gemini'); });
+
+  document.getElementById('pb-openai')
+    .addEventListener('click', function () { Settings.setProvider('openai'); });
+
+  document.getElementById('btn-connect')
+    .addEventListener('click', function () { Settings.testConnect(); });
+
+  document.getElementById('btn-back-settings')
+    .addEventListener('click', function () { Nav.go('home'); });
+
+  // ── モード選択 ───────────────────────────────────
+  document.getElementById('mc-block')
+    .addEventListener('click', function () { Nav.selectMode('block'); });
+
+  document.getElementById('mc-3d')
+    .addEventListener('click', function () { Nav.selectMode('3d'); });
+
+  document.getElementById('mc-2d')
+    .addEventListener('click', function () { Nav.selectMode('2.5d'); });
+
+  document.getElementById('btn-back-mode')
+    .addEventListener('click', function () { Nav.go('home'); });
+
+  // ── パレット ツールバー ──────────────────────────
+  document.getElementById('btn-exit-palette')
+    .addEventListener('click', function () { Nav.go('home'); });
+
+  document.getElementById('btn-undo')
+    .addEventListener('click', function () { Draw.undo(); });
+
+  document.getElementById('btn-redo')
+    .addEventListener('click', function () { Draw.redo(); });
+
+  document.getElementById('btn-clear')
+    .addEventListener('click', function () { Draw.clear(); });
+
+  document.getElementById('btn-complete')
+    .addEventListener('click', function () { Nav.complete(); });
+
+  document.getElementById('eraser-btn')
+    .addEventListener('click', function () { Draw.toggleEraser(); });
+
+  // ── ブラシサイズ (data-r 属性から半径を取得) ─────
+  document.querySelectorAll('.bsz').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var r = parseInt(btn.getAttribute('data-r'), 10);
+      Draw.setBrush(r, btn);
+    });
+  });
+
+  // ── 保存・ゲーム終了 ─────────────────────────────
+  document.getElementById('btn-save')
+    .addEventListener('click', function () { Draw.save(); });
+
+  document.getElementById('btn-exit-game')
+    .addEventListener('click', function () { Nav.exitGame(); });
+
+  // R3-1 FIX: key-inp を変更したら S.apiKey を即座に更新する
+  // 「接続テスト」を押さずに戻った場合でも正しいキーを使う
+  document.getElementById('key-inp')
+    .addEventListener('input', function () {
+      S.apiKey = this.value.trim();
+    });
+}
+
+// ═══════════════════════════════════════════════════
+//  スター背景
+// ═══════════════════════════════════════════════════
+
+function buildStarField() {
+  var container = document.getElementById('star-field');
+  if (!container) return;
+
+  // 教育テーマ: 白い星の代わりにカラフルなバブルを浮かせる
+  var colors = [
+    '#ff6b6b', '#ffd166', '#2ed573', '#4da6ff',
+    '#a29bfe', '#ff8c42', '#00cec9', '#fd79a8'
+  ];
+
+  for (var i = 0; i < 45; i++) {
+    var dot   = document.createElement('div');
+    var size  = (Math.random() * 28 + 10).toFixed(0);
+    var color = colors[Math.floor(Math.random() * colors.length)];
+    var dur   = (4 + Math.random() * 6).toFixed(2);
+    var delay = (Math.random() * 6).toFixed(2);
+    var left  = (Math.random() * 100).toFixed(1);
+    var top   = (Math.random() * 100).toFixed(1);
+
+    dot.className = 'star';
+    dot.style.width            = size + 'px';
+    dot.style.height           = size + 'px';
+    dot.style.left             = left + '%';
+    dot.style.top              = top  + '%';
+    dot.style.background       = color;
+    dot.style.opacity          = '0.10';
+    dot.style.borderRadius     = '50%';
+    dot.style.filter           = 'blur(1px)';
+    dot.style.animation        =
+      'twk ' + dur + 's ' + delay + 's ease-in-out infinite alternate';
+
+    container.appendChild(dot);
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//  ウィンドウリサイズ (デバウンス付き)
+// ═══════════════════════════════════════════════════
+
+// R5-2 FIX: 高速リサイズで Draw.init() が連発するのを防ぐデバウンス
+var _resizeTimer = null;
+
+window.addEventListener('resize', function () {
+  if (!document.getElementById('s-palette').classList.contains('on')) return;
+  if (!Draw.cv) return;
+
+  // リサイズが止まって150ms後に実行 (その間の連続呼び出しはキャンセル)
+  if (_resizeTimer) clearTimeout(_resizeTimer);
+  _resizeTimer = setTimeout(function () {
+    _resizeTimer = null;
+
+    var saved = Draw.cv.toDataURL('image/png', 0.9);
+    Draw.init(false);
+
+    var img    = new Image();
+    img.onload = function () {
+      Draw.ctx.setTransform(Draw.dpr, 0, 0, Draw.dpr, 0, 0);
+      Draw.ctx.clearRect(0, 0, Draw.logW, Draw.logH);
+      Draw.ctx.drawImage(img, 0, 0, Draw.logW, Draw.logH);
+      // R5-1 FIX: _snapURL() で webp/jpeg 圧縮 (png の quality 引数は無効)
+      Draw.hist = [Draw._snapURL()];
+      Draw.hi   = 0;
+      Draw._updButtons();
+    };
+    img.src = saved;
+  }, 150);
+});
+
+// ═══════════════════════════════════════════════════
+//  エラーガード: JS ロード失敗を検知してユーザーに通知
+// ═══════════════════════════════════════════════════
+
+function checkDependencies() {
+  var missing = [];
+  if (typeof S        === 'undefined') missing.push('state.js');
+  if (typeof Palette  === 'undefined') missing.push('palette.js');
+  if (typeof Draw     === 'undefined') missing.push('draw.js');
+  if (typeof Settings === 'undefined') missing.push('settings.js');
+  if (typeof API      === 'undefined') missing.push('api.js');
+  if (typeof Nav      === 'undefined') missing.push('nav.js');
+
+  if (missing.length > 0) {
+    document.body.innerHTML =
+      '<div style="display:flex;align-items:center;justify-content:center;' +
+      'height:100vh;background:#070712;color:#ff3060;font-family:sans-serif;' +
+      'flex-direction:column;gap:16px;padding:24px;text-align:center">' +
+      '<div style="font-size:2rem">⚠</div>' +
+      '<div style="font-size:1.1rem;font-weight:bold">スクリプトのロードに失敗しました</div>' +
+      '<div style="font-size:.85rem;color:#7070a0">見つからないファイル: ' +
+      missing.join(', ') + '</div>' +
+      '<div style="font-size:.8rem;color:#404068">' +
+      'GitHub Pages の場合、フォルダ構成が正しいか確認してください。<br>' +
+      'index.html と同じ階層に css/ と js/ フォルダが必要です。</div>' +
+      '</div>';
+    return false;
+  }
+  return true;
+}
+
+// ═══════════════════════════════════════════════════
+//  アプリ起動
+// ═══════════════════════════════════════════════════
+
+// スクリプトは <body> 末尾にあるので DOM は確実にロード済み
+if (checkDependencies()) {
+  buildStarField();
+  bindAll();
+  Palette.build();
+  Settings.load();
+}
+
+</script>
+
+</body>
+</html>
